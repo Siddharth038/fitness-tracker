@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fitness Dashboard">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="description" content="Personal Fitness Dashboard — mobile-first local fitness tracker">
+<title>Personal Fitness Dashboard</title>
+<style>
+:root{
+  --bg:#080b14;
+  --surface:#101522;
+  --surface2:#151c2c;
+  --surface3:#1a2336;
+  --text:#f3f5fb;
+  --muted:#9ca7ba;
+  --line:#263149;
+  --accent:#8b5cf6;
+  --accent2:#22c55e;
+  --warn:#f59e0b;
+  --danger:#ef4444;
+  --info:#38bdf8;
+  --radius:18px;
+  --shadow:0 14px 35px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:linear-gradient(180deg,#080b14 0%,#0b1020 100%);
+  color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100vh;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{max-width:1180px;margin:0 auto;padding:18px 16px 96px}
+.header{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+  margin-bottom:18px;
+}
+.brand h1{font-size:24px;margin:0 0 4px;font-weight:800;letter-spacing:-.03em}
+.brand p{margin:0;color:var(--muted);font-size:13px}
+.header-actions{display:flex;gap:8px}
+.icon-btn,.ghost-btn{
+  border:1px solid var(--line);background:var(--surface);color:var(--text);
+  padding:9px 11px;border-radius:12px
+}
+.icon-btn:hover,.ghost-btn:hover{background:var(--surface2)}
+.hero{
+  background:radial-gradient(circle at 85% 10%,rgba(139,92,246,.26),transparent 35%),linear-gradient(135deg,#15132a,#101827);
+  border:1px solid #2c3050;border-radius:24px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px;
+}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.hero-title{font-size:14px;color:#c5b9ff;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.hero-main{font-size:36px;font-weight:850;letter-spacing:-.04em;margin-top:4px}
+.hero-sub{color:var(--muted);font-size:13px;margin-top:3px}
+.progress-wrap{min-width:220px;max-width:360px;flex:1}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:7px}
+.progress{height:9px;background:#222b40;border-radius:999px;overflow:hidden}
+.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#a78bfa);border-radius:999px}
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px
+}
+.stat,.card{
+  background:rgba(16,21,34,.9);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)
+}
+.stat{padding:14px}
+.stat .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat .value{font-size:22px;font-weight:800;margin-top:5px}
+.stat .meta{font-size:11px;color:var(--muted);margin-top:2px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.col-12{grid-column:span 12}.col-8{grid-column:span 8}.col-7{grid-column:span 7}.col-6{grid-column:span 6}.col-5{grid-column:span 5}.col-4{grid-column:span 4}
+.card{padding:16px}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.section-title h2,.section-title h3{margin:0;font-size:16px}
+.section-title span{font-size:12px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface2);color:#cdd6e8;font-size:12px}
+.chip.accent{border-color:#5e45a6;background:#211a3a;color:#d8c9ff}
+.chip.green{border-color:#23663b;background:#122a1c;color:#9be4b1}
+.chip.warn{border-color:#6c4a18;background:#2a1e0b;color:#ffd78a}
+.chip.red{border-color:#6f2525;background:#2c1212;color:#ffb0b0}
+.check-list{display:grid;gap:9px}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border:1px solid var(--line);background:var(--surface2);border-radius:13px}
+.check-item input{accent-color:var(--accent);width:18px;height:18px}
+.check-item.done{opacity:.58;text-decoration:line-through}
+.big-number{font-size:30px;font-weight:850}
+.small{font-size:12px;color:var(--muted)}
+.btn{
+  border:0;border-radius:12px;padding:10px 13px;font-weight:700;color:#fff;background:var(--accent)
+}
+.btn.secondary{background:var(--surface3);border:1px solid var(--line)}
+.btn.green{background:#188a4a}
+.btn.warn{background:#a15f0c}
+.btn.danger{background:#a82c2c}
+.btn.full{width:100%}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--line);
+  border-radius:11px;padding:10px 11px;outline:none
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#6041b3}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--muted);font-weight:600}
+.tag{font-size:10px;padding:4px 7px;border-radius:999px;background:#202a3e;color:#bec8db}
+.nav{
+  position:fixed;z-index:30;left:0;right:0;bottom:0;
+  background:rgba(8,11,20,.92);backdrop-filter:blur(16px);border-top:1px solid var(--line);
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+}
+.nav-inner{max-width:1180px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.nav button{
+  border:0;background:transparent;color:#7f8a9f;padding:8px 3px;border-radius:12px;font-size:10px;
+}
+.nav button.active{background:#1a1530;color:#d8cbff}
+.nav .emoji{font-size:18px;display:block;margin-bottom:2px}
+.view{display:none}.view.active{display:block}
+.subnav{display:flex;gap:7px;overflow:auto;padding-bottom:3px;margin-bottom:13px}
+.subnav button{white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:8px 11px;border-radius:999px;font-size:12px}
+.subnav button.active{background:#241b43;border-color:#5b45a1;color:#ddd1ff}
+.exercise{border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:12px;margin-bottom:9px}
+.exercise-head{display:flex;justify-content:space-between;gap:10px}
+.exercise-name{font-weight:760;font-size:14px}
+.exercise-meta{font-size:11px;color:var(--muted);margin-top:4px}
+.set-grid{display:grid;grid-template-columns:42px 1fr 1fr 1fr;gap:6px;margin-top:10px}
+.set-grid div{font-size:11px;color:var(--muted);text-align:center}
+.set-grid input{width:100%;padding:7px 5px;text-align:center;background:#0f1421;color:#fff;border:1px solid #29344c;border-radius:8px}
+.set-grid .setno{padding-top:8px}
+.status-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px;background:var(--muted)}
+.status-dot.green{background:var(--accent2)}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.kpi{padding:11px;border:1px solid var(--line);background:var(--surface2);border-radius:13px}
+.kpi b{font-size:17px}.kpi span{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+.day-card{border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:13px}
+.day-card h3{margin:0;font-size:14px}.day-card p{color:var(--muted);font-size:12px;margin:5px 0 0}
+.timeline{position:relative;padding-left:16px}
+.timeline:before{content:"";position:absolute;left:5px;top:2px;bottom:2px;width:2px;background:#2a3550}
+.timeline-item{position:relative;margin-bottom:14px}
+.timeline-item:before{content:"";position:absolute;left:-15px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px #1c1630}
+.timeline-item b{font-size:13px}.timeline-item p{font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.45}
+.alert{padding:11px 12px;border-radius:12px;background:#24190a;border:1px solid #5a421d;color:#ffd98a;font-size:12px;line-height:1.45}
+.info{padding:11px 12px;border-radius:12px;background:#0d2230;border:1px solid #19455e;color:#a8dcf6;font-size:12px;line-height:1.45}
+.success{padding:11px 12px;border-radius:12px;background:#0d2115;border:1px solid #1c5a31;color:#a9e4ba;font-size:12px;line-height:1.45}
+.recipe{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+.recipe:last-child{border-bottom:0}
+.recipe h4{margin:0 0 4px;font-size:13px}.recipe p{margin:0;color:var(--muted);font-size:11px;line-height:1.45}
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.progress-circle{
+  width:86px;height:86px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--accent) var(--pct),#202a3f 0);
+}
+.progress-circle:before{
+  content:"";width:62px;height:62px;border-radius:50%;background:var(--surface);position:absolute
+}
+.progress-circle span{position:relative;font-weight:850;font-size:17px}
+.circle-wrap{position:relative;display:flex;justify-content:center}
+.empty{padding:18px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--line);border-radius:12px}
+.footer-note{font-size:11px;color:var(--muted);text-align:center;padding:18px 6px}
+@media(max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .col-8,.col-7,.col-6,.col-5,.col-4{grid-column:span 12}
+}
+@media(max-width:640px){
+  .app{padding:14px 12px 94px}
+  .hero-main{font-size:30px}
+  .two{grid-template-columns:1fr}
+  .kpi-row{grid-template-columns:1fr}
+  .stat .value{font-size:20px}
+  .header-actions .ghost-btn{display:none}
+  table{font-size:11px}
+  th,td{padding:8px 5px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="brand">
+      <h1>Personal Fitness Dashboard</h1>
+      <p>12-month lean-gain plan • local/offline tracker • v2</p>
+      <div id="storageStatus" class="small" style="margin-top:6px"></div>
+    </div>
+    <div class="header-actions">
+      <button class="ghost-btn" onclick="exportData()">Backup</button>
+      <button class="ghost-btn" onclick="restoreLocalBackup()">Restore</button>
+      <label class="icon-btn" title="Import saved data">Import<input id="importFile" type="file" accept=".json" hidden></label>
+    </div>
+  </header>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="view active">
+      <div class="hero">
+        <div class="hero-top">
+          <div>
+            <div class="hero-title">Current phase</div>
+            <div class="hero-main" id="dashPhase">Phase 1 — Stabilize</div>
+            <div class="hero-sub">Build consistency first. Weight target is a trend, not a deadline.</div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>12-month roadmap</span><strong id="monthLabel">Month 1</strong></div>
+            <div class="progress"><span id="roadmapProgress" style="width:8.3%"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="label">Weight</div><div class="value" id="dashWeight">72.0 kg</div><div class="meta">Long-term: 80–85 kg</div></div>
+        <div class="stat"><div class="label">Calories</div><div class="value">2,450</div><div class="meta">starting target</div></div>
+        <div class="stat"><div class="label">Protein</div><div class="value">140–150 g</div><div class="meta">daily target</div></div>
+        <div class="stat"><div class="label">Steps</div><div class="value" id="dashSteps">2,000</div><div class="meta">start here → build gradually</div></div>
+      </div>
+
+      <div class="grid">
+        <div class="card col-7">
+          <div class="section-title"><h2>Today</h2><span id="todayDate"></span></div>
+          <div id="todayWorkout" class="day-card"></div>
+          <div style="height:10px"></div>
+          <div class="section-title"><h3>Daily checklist</h3><span id="checkProgress">0/8</span></div>
+          <div class="check-list" id="checklist"></div>
+        </div>
+
+        <div class="card col-5">
+          <div class="section-title"><h2>Quick metrics</h2><span>saved locally</span></div>
+          <div class="kpi-row">
+            <div class="kpi"><b id="avgWeight">72.0</b><span>7-day avg weight (kg)</span></div>
+            <div class="kpi"><b id="proteinToday">0</b><span>protein logged today (g)</span></div>
+            <div class="kpi"><b id="sleepToday">0</b><span>sleep last night (h)</span></div>
+          </div>
+          <div style="height:12px"></div>
+          <div class="success">Main priorities: consistent training, adequate food/protein, progressive overload, controlled bodyweight gain, and protecting your back.</div>
+          <div style="height:10px"></div>
+          <div class="alert">Medical note: your August TSH was 9.99. Keep thyroid follow-up with your clinician; do not self-adjust medication.</div>
+        </div>
+
+        <div class="card col-12" id="installCard">
+          <div class="section-title"><h2>iPhone setup</h2><span>PWA</span></div>
+          <div class="info">Open this app from its HTTPS website in Safari, then use <strong>Share → Add to Home Screen</strong>. Once installed, it opens like an app and keeps tracking data in the browser.</div>
+        </div>
+
+        <div class="card col-12">
+          <div class="section-title"><h2>This week's targets</h2><span>simple + repeatable</span></div>
+          <div class="chips">
+            <span class="chip accent">5 lifting sessions</span>
+            <span class="chip accent">135–150g protein/day</span>
+            <span class="chip accent">2,400–2,500 kcal/day</span>
+            <span class="chip green">2k+ steps/day initially</span>
+            <span class="chip green">7.5–8h sleep</span>
+            <span class="chip warn">No pain-provocation</span>
+            <span class="chip">Log every working set</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORKOUT -->
+    <section id="workout" class="view">
+      <div class="section-title">
+        <div><h2>Workout</h2><span>60-minute sessions • 1–3 RIR on most sets</span></div>
+        <div class="row"><button class="btn secondary" onclick="resetWorkout()">Clear today's log</button></div>
+      </div>
+      <div class="subnav" id="workoutDays"></div>
+      <div id="workoutContent"></div>
+    </section>
+
+    <!-- DIET -->
+    <section id="diet" class="view">
+      <div class="section-title"><div><h2>Diet</h2><span>lean-gain starting point</span></div></div>
+      <div class="grid">
+        <div class="card col-12">
+          <div class="kpi-row">
+            <div class="kpi"><b>2,400–2,500</b><span>kcal/day</span></div>
+            <div class="kpi"><b>135–150 g</b><span>protein/day</span></div>
+            <div class="kpi"><b>~65–75 g</b><span>fat/day</span></div>
+          </div>
+          <div style="height:12px"></div>
+          <div class="info">Start around 2,450 kcal. The goal is a small, controlled gain of roughly 0.1–0.2 kg/week. Use the weekly average, not single-day scale changes.</div>
+        </div>
+
+        <div class="card col-7">
+          <div class="section-title"><h3>Office-friendly Indian day</h3><span>example</span></div>
+          <table>
+            <thead><tr><th>Time</th><th>Meal</th><th>Protein focus</th></tr></thead>
+            <tbody>
+              <tr><td>11:00</td><td>Protein shake + oats + banana + 2–4 eggs</td><td>30–40g</td></tr>
+              <tr><td>12:00</td><td>Banana / easy carbs</td><td>small</td></tr>
+              <tr><td>14:30</td><td>3 roti + rice + dal + paneer/curd/eggs</td><td>30–40g</td></tr>
+              <tr><td>18:00</td><td>Protein milk + oats or curd + fruit</td><td>25–35g</td></tr>
+              <tr><td>22:00</td><td>Rice/roti + dal + paneer/soy + vegetables</td><td>30–40g</td></tr>
+              <tr><td>02:30</td><td>Milk/curd/whey if protein is short</td><td>15–25g</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card col-5">
+          <div class="section-title"><h3>Quick alternatives</h3><span>cheap / lazy</span></div>
+          <div class="chips">
+            <span class="chip">Eggs</span><span class="chip">Soy chunks</span><span class="chip">Dal</span><span class="chip">Milk</span>
+            <span class="chip">Curd</span><span class="chip">Greek yogurt</span><span class="chip">Paneer</span><span class="chip">Whey</span>
+          </div>
+          <div style="height:10px"></div>
+          <div class="small">No-cook ideas: protein milk + oats; Greek yogurt + oats + fruit; whey + milk + banana; ready curd + paneer sandwich.</div>
+        </div>
+
+        <div class="card col-6">
+          <div class="section-title"><h3>Pre-workout</h3></div>
+          <div class="recipe"><div><h4>Fast option</h4><p>Banana + toast/roti + optional whey/protein milk.</p></div><span class="tag">30–90 min</span></div>
+          <div class="recipe"><div><h4>When lunch is close</h4><p>Small carb serving; avoid a very heavy/fatty meal right before training.</p></div><span class="tag">60–120 min</span></div>
+        </div>
+
+        <div class="card col-6">
+          <div class="section-title"><h3>Post-workout</h3></div>
+          <div class="recipe"><div><h4>Simple</h4><p>Whey + banana, followed by your normal lunch/meal.</p></div><span class="tag">easy</span></div>
+          <div class="recipe"><div><h4>Food-first</h4><p>Rice/roti + dal + paneer/eggs/soy + curd.</p></div><span class="tag">full meal</span></div>
+        </div>
+
+        <div class="card col-12">
+          <div class="section-title"><h3>Eating out: keep the protein</h3><span>when office food is poor</span></div>
+          <div class="chips">
+            <span class="chip">Egg bhurji + roti</span>
+            <span class="chip">Paneer + roti</span>
+            <span class="chip">Dal + rice + curd</span>
+            <span class="chip">Idli + sambar + eggs if available</span>
+            <span class="chip">Paneer/egg sandwich</span>
+            <span class="chip">Curd + rice + dal</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUPPLEMENTS -->
+    <section id="supplements" class="view">
+      <div class="section-title"><div><h2>Supplements</h2><span>purpose over hype</span></div></div>
+      <div class="grid">
+        <div class="card col-6">
+          <div class="section-title"><h3>Creatine monohydrate</h3><span class="chip green">recommended</span></div>
+          <div class="big-number">3–5 g/day</div>
+          <p class="small">Take daily. Timing is not important; consistency is.</p>
+        </div>
+        <div class="card col-6">
+          <div class="section-title"><h3>Whey protein</h3><span class="chip">optional</span></div>
+          <div class="big-number">As needed</div>
+          <p class="small">Use it to close your protein gap. It is convenience, not magic.</p>
+        </div>
+        <div class="card col-12">
+          <div class="section-title"><h3>Not necessary by default</h3></div>
+          <div class="chips">
+            <span class="chip red">BCAA</span><span class="chip red">test boosters</span><span class="chip red">fat burners</span>
+            <span class="chip red">mass gainers</span><span class="chip red">complicated stacks</span>
+          </div>
+        </div>
+        <div class="card col-12">
+          <div class="alert">Thyroid note: do not add, remove, or change thyroid medication based on this dashboard. Your prescribed Thyroidinum 3X dose should be discussed with the prescribing clinician if doses are missed.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECIPES -->
+    <section id="recipes" class="view">
+      <div class="section-title"><div><h2>Recipes</h2><span>simple Indian muscle-building food</span></div></div>
+      <div class="grid">
+        <div class="card col-6">
+          <div class="recipe"><div><h4>Protein Oats Bowl</h4><p>Oats + milk/curd + whey + banana. Add cinnamon or fruit.</p><div class="badge-row"><span class="tag">breakfast</span><span class="tag">no-cook</span></div></div></div>
+          <div class="recipe"><div><h4>Soya Rice Bowl</h4><p>Cooked rice + soy chunks + vegetables + curd. Easy bulk prep.</p><div class="badge-row"><span class="tag">lunch</span><span class="tag">cheap</span></div></div></div>
+          <div class="recipe"><div><h4>Paneer Roti Roll</h4><p>Paneer + roti + onion/tomato + curd or chutney.</p><div class="badge-row"><span class="tag">office</span><span class="tag">portable</span></div></div></div>
+        </div>
+        <div class="card col-6">
+          <div class="recipe"><div><h4>Egg & Roti Plate</h4><p>3–4 eggs + roti + curd + fruit.</p><div class="badge-row"><span class="tag">fast</span><span class="tag">high-protein</span></div></div></div>
+          <div class="recipe"><div><h4>Curd Crunch Bowl</h4><p>Greek yogurt/curd + oats + fruit + optional whey.</p><div class="badge-row"><span class="tag">night shift</span><span class="tag">no-cook</span></div></div></div>
+          <div class="recipe"><div><h4>Dal + Rice + Paneer</h4><p>Simple staple meal. Increase the protein portion before increasing junk calories.</p><div class="badge-row"><span class="tag">budget</span><span class="tag">main meal</span></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NIGHT SHIFT -->
+    <section id="nightshift" class="view">
+      <div class="section-title"><div><h2>Night Shift</h2><span>built around 3:30 AM–11:00 AM schedule</span></div></div>
+      <div class="grid">
+        <div class="card col-7">
+          <div class="section-title"><h3>Suggested rhythm</h3><span>adjust to real life</span></div>
+          <div class="timeline">
+            <div class="timeline-item"><b>11:00 AM — Wake</b><p>Water, first meal, daily check-in.</p></div>
+            <div class="timeline-item"><b>12:30 PM — Gym</b><p>60-minute session. Log working sets and RIR.</p></div>
+            <div class="timeline-item"><b>2:30 PM — Main meal</b><p>Protein-focused lunch before office.</p></div>
+            <div class="timeline-item"><b>3:30 PM — Office</b><p>Break up long sitting; short walks through the shift.</p></div>
+            <div class="timeline-item"><b>6:30–8:00 PM — Protein snack</b><p>Protein milk + oats/curd/fruit or packed food.</p></div>
+            <div class="timeline-item"><b>10:00 PM–12:00 AM — Dinner</b><p>Normal Indian meal with a clear protein source.</p></div>
+            <div class="timeline-item"><b>2:30–3:30 AM — Wind down</b><p>Light final snack only if needed; keep sleep routine consistent.</p></div>
+          </div>
+        </div>
+        <div class="card col-5">
+          <div class="section-title"><h3>Movement breaks</h3><span>low-friction</span></div>
+          <div class="check-list">
+            <div class="check-item"><span class="status-dot"></span>2–5 min walk each hour when practical</div>
+            <div class="check-item"><span class="status-dot"></span>Short walk around dinner break</div>
+            <div class="check-item"><span class="status-dot"></span>Start around 2,000 steps/day</div>
+            <div class="check-item"><span class="status-dot"></span>Progress toward 4,000–6,000/day</div>
+          </div>
+        </div>
+        <div class="card col-12">
+          <div class="info">Your work schedule does not automatically prevent muscle gain. The big advantage comes from making meals and training predictable despite the shift.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRACKING -->
+    <section id="tracking" class="view">
+      <div class="section-title"><div><h2>Tracking</h2><span>weekly averages beat daily noise</span></div></div>
+      <div class="grid">
+        <div class="card col-6">
+          <div class="section-title"><h3>Daily log</h3><span>saved locally</span></div>
+          <div class="two">
+            <div class="field"><label>Date</label><input type="date" id="logDate"></div>
+            <div class="field"><label>Weight (kg)</label><input type="number" step="0.1" id="logWeight" placeholder="72.0"></div>
+            <div class="field"><label>Calories</label><input type="number" id="logCalories" placeholder="2450"></div>
+            <div class="field"><label>Protein (g)</label><input type="number" id="logProtein" placeholder="145"></div>
+            <div class="field"><label>Steps</label><input type="number" id="logSteps" placeholder="2000"></div>
+            <div class="field"><label>Sleep (h)</label><input type="number" step="0.1" id="logSleep" placeholder="7.5"></div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="field"><label>Notes</label><textarea id="logNotes" rows="3" placeholder="Energy, soreness, back comfort, appetite..."></textarea></div>
+          <div style="height:10px"></div>
+          <button class="btn full" onclick="saveDailyLog()">Save daily log</button>
+        </div>
+
+        <div class="card col-6">
+          <div class="section-title"><h3>Monthly measurements</h3><span>every 4 weeks</span></div>
+          <div class="two">
+            <div class="field"><label>Date</label><input type="date" id="measureDate"></div>
+            <div class="field"><label>Waist (cm)</label><input type="number" step="0.1" id="measureWaist"></div>
+            <div class="field"><label>Chest (cm)</label><input type="number" step="0.1" id="measureChest"></div>
+            <div class="field"><label>Flexed arm (cm)</label><input type="number" step="0.1" id="measureArm"></div>
+            <div class="field"><label>Thigh (cm)</label><input type="number" step="0.1" id="measureThigh"></div>
+            <div class="field"><label>Body fat % (optional)</label><input type="number" step="0.1" id="measureBf"></div>
+          </div>
+          <div style="height:10px"></div>
+          <button class="btn secondary full" onclick="saveMeasurement()">Save measurements</button>
+          <div style="height:10px"></div>
+          <div class="small">Buy a flexible measuring tape when convenient. Jeans size is only a rough proxy; don't treat it as a precise waist value.</div>
+        </div>
+
+        <div class="card col-12">
+          <div class="section-title"><h3>Recent logs</h3><button class="btn secondary" onclick="clearTracking()">Clear all tracking</button></div>
+          <div style="overflow:auto"><table id="trackingTable"></table></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section id="roadmap" class="view">
+      <div class="section-title"><div><h2>12-Month Roadmap</h2><span>phases follow your response, not arbitrary dates</span></div></div>
+      <div class="timeline">
+        <div class="card timeline-item">
+          <b>Phase 1 — Months 1–2: Stabilize</b>
+          <p><strong>Goal:</strong> recover consistency after the 84→72 kg drop, establish food intake, logging, pain-free exercise selection, and medical follow-up. <strong>Training:</strong> 5 days with controlled volume, 1–3 RIR. <strong>Calories:</strong> ~2,400–2,500. <strong>Protein:</strong> 135–150g. <strong>Steps:</strong> ~2k/day, gradually upward. <strong>Expected:</strong> weight stabilizes or begins gaining ~0.1–0.2 kg/week; performance becomes less erratic. <strong>Move on:</strong> 3–4 consistent weeks, food adherence high, and weight trend understood.</p>
+        </div>
+        <div class="card timeline-item">
+          <b>Phase 2 — Months 3–6: Build</b>
+          <p><strong>Goal:</strong> measurable muscle gain, especially legs, biceps, chest/back. <strong>Training:</strong> same core program with progressive overload. <strong>Calories:</strong> adjust only from 7-day weight averages. <strong>Protein:</strong> 135–150g. <strong>Steps:</strong> ~3–5k/day. <strong>Expected:</strong> gradual strength increases and visible fullness. <strong>Move on:</strong> stable gain without excessive waist increase and good recovery.</p>
+        </div>
+        <div class="card timeline-item">
+          <b>Phase 3 — Months 7–9: Build + refine</b>
+          <p><strong>Goal:</strong> continue gaining while bringing up proportions. <strong>Training:</strong> keep major lifts stable; add volume only where recovery and progress justify it. <strong>Calories:</strong> maintain the smallest surplus that keeps progress moving. <strong>Protein:</strong> 135–150g. <strong>Expected:</strong> better arm/leg balance, stronger pressing and pulling. <strong>Move on:</strong> once you have enough data to decide between further gain and a short maintenance/mini-cut period.</p>
+        </div>
+        <div class="card timeline-item">
+          <b>Phase 4 — Months 10–12: Evaluate</b>
+          <p><strong>Goal:</strong> consolidate the year's gains and decide the next direction. <strong>Training:</strong> maintain the proven program. <strong>Calories:</strong> maintenance or modest surplus based on waist, weight and performance. <strong>Expected:</strong> a noticeably more developed overall physique if adherence stays high. <strong>Move on:</strong> year-end review and next-cycle plan.</p>
+        </div>
+      </div>
+      <div class="info">80–85 kg is a long-term direction, not a 12-month requirement. The dashboard prioritizes lean mass and visual improvement over a forced scale number.</div>
+    </section>
+
+    <!-- RULES -->
+    <section id="rules" class="view">
+      <div class="section-title"><div><h2>Rules</h2><span>the system that keeps the plan stable</span></div></div>
+      <div class="grid">
+        <div class="card col-6">
+          <div class="section-title"><h3>Plateau rules</h3></div>
+          <div class="check-list">
+            <div class="check-item"><b>Weight not changing:</b> first verify 2–3 weeks of consistent intake, then add ~100–150 kcal/day.</div>
+            <div class="check-item"><b>Waist rising too quickly:</b> remove ~100–150 kcal/day and keep protein stable.</div>
+            <div class="check-item"><b>Strength stalls:</b> check sleep, food, RIR, technique and exercise pain before adding more volume.</div>
+            <div class="check-item"><b>Muscle not growing:</b> verify progressive overload and adequate weekly sets; only then add 1–2 sets/week.</div>
+            <div class="check-item"><b>Recovery poor:</b> reduce sets before adding stimulants; consider a deload if fatigue persists.</div>
+          </div>
+        </div>
+        <div class="card col-6">
+          <div class="section-title"><h3>Training rules</h3></div>
+          <div class="check-list">
+            <div class="check-item">Most sets finish with <strong>1–3 RIR</strong>.</div>
+            <div class="check-item">Use failure selectively on safer isolation work.</div>
+            <div class="check-item">Increase reps first, then load.</div>
+            <div class="check-item">Do not force exercises that reproduce your back pain.</div>
+            <div class="check-item">Keep the core program stable long enough to measure it.</div>
+          </div>
+        </div>
+        <div class="card col-12">
+          <div class="section-title"><h3>Why your previous 3–4 years produced limited results</h3></div>
+          <p class="small" style="line-height:1.7;margin:0">
+            <strong>Confirmed from your history:</strong> the training period was inconsistent, there were repeated breaks, there was no formal workout log, nutrition was not tracked, protein intake was inconsistent, progression was informal, leg training was limited by back pain, and your lifts fell alongside a large recent bodyweight drop.
+            <br><br>
+            <strong>Reasonable inference:</strong> this combination likely reduced your total effective training stimulus and made progressive overload and recovery difficult to sustain. It is more useful to fix these controllable factors than to search for a special “body type” explanation.
+          </p>
+        </div>
+        <div class="card col-12">
+          <div class="alert"><strong>Medical safety:</strong> chronic back pain and abnormal thyroid labs should be followed by qualified clinicians. This app is a training/nutrition tracker, not a diagnostic or medication tool.</div>
+        </div>
+        <div class="card col-12">
+          <button class="btn danger" onclick="resetAll()">Reset all app data</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="active" data-view="dashboard"><span class="emoji">🏠</span>Dashboard</button>
+    <button data-view="workout"><span class="emoji">🏋️</span>Workout</button>
+    <button data-view="diet"><span class="emoji">🍛</span>Diet</button>
+    <button data-view="tracking"><span class="emoji">📊</span>Tracking</button>
+    <button data-view="roadmap"><span class="emoji">🗺️</span>Roadmap</button>
+  </div>
+</nav>
+
+<script>
+const KEY = "sid_fitness_dashboard_v1";
+const APP_VERSION = 2;
+
+// Compatibility policy:
+// - Keep the same localStorage KEY so future static versions on the same origin
+//   continue to see the same tracking data.
+// - Migrate/merge missing fields instead of replacing the user's saved object.
+// - Before a schema upgrade, keep a backup snapshot in a separate localStorage key.
+const BACKUP_KEY = KEY + "_backup";
+const META_KEY = KEY + "_meta";
+
+function persistWithMigrationSafety(nextData){
+  try{
+    const previous = localStorage.getItem(KEY);
+    if(previous) localStorage.setItem(BACKUP_KEY, previous);
+    localStorage.setItem(KEY, JSON.stringify(nextData));
+    localStorage.setItem(META_KEY, JSON.stringify({version:APP_VERSION, savedAt:new Date().toISOString()}));
+  }catch(e){
+    console.warn("Could not persist fitness data", e);
+  }
+}
+
+const plan = {
+  monday:{name:"Chest + Side Delts + Triceps",focus:"Chest thickness, side delts, triceps", exercises:[
+    ["Incline DB Press",3,6,10,"2 RIR","90–150s"],
+    ["Machine Chest Press",3,8,12,"1–2 RIR","90s"],
+    ["Cable/Machine Fly",2,10,15,"1–2 RIR","60–90s"],
+    ["Lateral Raise",3,10,15,"1–2 RIR","60–90s"],
+    ["Incline EZ-Bar Triceps Extension",2,8,12,"2 RIR","75–90s"],
+    ["Cable Triceps Extension",2,10,15,"1–2 RIR","60–90s"]
+  ]},
+  tuesday:{name:"Back + Biceps",focus:"Lats, upper-back development, biceps", exercises:[
+    ["Pull-ups / Assisted Pull-ups",3,6,10,"1–3 RIR","90–150s"],
+    ["Close-Grip Lat Pulldown",3,8,12,"1–2 RIR","90s"],
+    ["Chest-Supported Row (pain-free only)",3,8,12,"2 RIR","90s"],
+    ["Rear-Delt Machine",2,12,15,"1–2 RIR","60–90s"],
+    ["EZ-Bar Curl",3,8,12,"1–2 RIR","75–90s"],
+    ["Hammer Curl",2,10,12,"1–2 RIR","60–90s"]
+  ]},
+  wednesday:{name:"Legs + Abs",focus:"Quads, hamstrings, calves, spine-friendly core", exercises:[
+    ["Leg Extension",3,10,15,"1–2 RIR","75–90s"],
+    ["Leg Curl",3,8,12,"1–2 RIR","75–90s"],
+    ["Single-Leg Extension",2,10,15,"1–2 RIR","60–75s"],
+    ["Single-Leg Curl",2,10,15,"1–2 RIR","60–75s"],
+    ["Calf Raise",3,10,15,"1–2 RIR","60–90s"],
+    ["Pain-free ab exercise",3,8,15,"1–3 RIR","60s"]
+  ]},
+  thursday:{name:"Upper Body",focus:"Balanced chest/back/shoulders + arms", exercises:[
+    ["Incline DB Press",3,8,10,"1–2 RIR","90–150s"],
+    ["Pulldown",3,8,12,"1–2 RIR","90s"],
+    ["Machine Chest Press",2,10,12,"1–2 RIR","90s"],
+    ["Supported Row (pain-free only)",2,8,12,"2 RIR","90s"],
+    ["Lateral Raise",3,12,15,"1–2 RIR","60–90s"],
+    ["Biceps Curl",2,10,12,"1–2 RIR","60–90s"],
+    ["Triceps Pushdown",2,10,12,"1–2 RIR","60–90s"]
+  ]},
+  friday:{name:"Arms + Legs",focus:"Biceps/triceps + second leg stimulus", exercises:[
+    ["Leg Extension",3,10,15,"1–2 RIR","75–90s"],
+    ["Leg Curl",3,10,15,"1–2 RIR","75–90s"],
+    ["Calf Raise",3,10,15,"1–2 RIR","60–90s"],
+    ["Preacher / Chest-Supported Curl",3,8,12,"1–2 RIR","75–90s"],
+    ["Hammer Curl",2,10,12,"1–2 RIR","60–90s"],
+    ["Overhead Cable Triceps Extension",3,8,12,"1–2 RIR","75–90s"],
+    ["Pushdown",2,10,15,"1–2 RIR","60–90s"]
+  ]}
+};
+
+const defaultData = {
+  settings:{weight:72,stepsTarget:2000},
+  dailyLogs:[],
+  measurements:[],
+  checklist:{},
+  workoutLogs:{},
+  activeDay:"monday"
+};
+let data = load();
+
+function deepMerge(base, incoming){
+  if(Array.isArray(base)) return Array.isArray(incoming) ? incoming : base;
+  if(base && typeof base === "object"){
+    const out = {...base};
+    if(incoming && typeof incoming === "object"){
+      for(const k of Object.keys(incoming)) out[k] = deepMerge(base[k], incoming[k]);
+    }
+    return out;
+  }
+  return incoming ?? base;
+}
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(!raw) return structuredClone(defaultData);
+    const parsed=JSON.parse(raw);
+    return deepMerge(defaultData, parsed);
+  }catch(e){
+    console.warn("Could not read saved data",e);
+    return structuredClone(defaultData);
+  }
+}
+function save(){ persistWithMigrationSafety(data); }
+
+function dateKey(d=new Date()){
+  const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+  return z.toISOString().slice(0,10);
+}
+const today=dateKey();
+
+const checklistItems=[
+  "Hit calories approximately",
+  "Hit 135–150g protein",
+  "Creatine 3–5g",
+  "2.5–3L water (unless medically restricted)",
+  "Complete workout / recovery day",
+  "Get today's step target",
+  "Log weight or key training data",
+  "Sleep 7.5–8h"
+];
+
+function setActiveView(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>setActiveView(b.dataset.view)));
+
+function renderDashboard(){
+  document.getElementById("todayDate").textContent=new Date().toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+  const latest = [...data.dailyLogs].sort((a,b)=>b.date.localeCompare(a.date))[0];
+  const weight = latest?.weight ?? data.settings.weight ?? 72;
+  document.getElementById("dashWeight").textContent=(Number(weight)||72).toFixed(1)+" kg";
+  document.getElementById("dashSteps").textContent=(data.settings.stepsTarget||2000).toLocaleString();
+
+  const m = getMonthNumber();
+  document.getElementById("monthLabel").textContent="Month "+m;
+  document.getElementById("roadmapProgress").style.width=(m/12*100)+"%";
+  document.getElementById("dashPhase").textContent = m<=2 ? "Phase 1 — Stabilize" : m<=6 ? "Phase 2 — Build" : m<=9 ? "Phase 3 — Build + Refine" : "Phase 4 — Evaluate";
+
+  const td=new Date().getDay();
+  const map={1:"monday",2:"tuesday",3:"wednesday",4:"thursday",5:"friday"};
+  const key=map[td];
+  const el=document.getElementById("todayWorkout");
+  if(key){
+    const p=plan[key];
+    el.innerHTML=`<h3>${p.name}</h3><p>${p.focus}</p><div class="badge-row"><span class="tag">${p.exercises.reduce((s,e)=>s+e[1],0)} working sets</span><span class="tag">60 min</span><span class="tag">1–3 RIR</span></div><div style="height:9px"></div><button class="btn full" onclick="setActiveView('workout');chooseDay('${key}')">Open today's workout</button>`;
+  }else{
+    el.innerHTML=`<h3>Rest / recovery</h3><p>Walk, recover, eat to target, and prepare for the next training day.</p>`;
+  }
+
+  const c=data.checklist[today]||{};
+  const list=document.getElementById("checklist");
+  let done=0;
+  list.innerHTML=checklistItems.map((txt,i)=>{
+    if(c[i]) done++;
+    return `<label class="check-item ${c[i]?'done':''}"><input type="checkbox" ${c[i]?'checked':''} onchange="toggleChecklist(${i},this.checked)"> ${txt}</label>`;
+  }).join("");
+  document.getElementById("checkProgress").textContent=done+"/"+checklistItems.length;
+
+  const logs=data.dailyLogs.filter(x=>x.weight!=null && x.weight!=="").slice(-7);
+  const avg=logs.length ? logs.reduce((s,x)=>s+Number(x.weight),0)/logs.length : weight;
+  document.getElementById("avgWeight").textContent=avg.toFixed(1);
+  const todayLog=data.dailyLogs.find(x=>x.date===today);
+  document.getElementById("proteinToday").textContent=todayLog?.protein || 0;
+  document.getElementById("sleepToday").textContent=todayLog?.sleep || 0;
+}
+
+function renderWorkoutNav(){
+  const labels={monday:"Mon",tuesday:"Tue",wednesday:"Wed",thursday:"Thu",friday:"Fri"};
+  document.getElementById("workoutDays").innerHTML=Object.keys(plan).map(k=>`<button class="${data.activeDay===k?'active':''}" onclick="chooseDay('${k}')">${labels[k]} · ${plan[k].name.split(" + ")[0]}</button>`).join("");
+}
+function chooseDay(key){
+  data.activeDay=key; save(); renderWorkoutNav(); renderWorkout();
+  setActiveView("workout");
+}
+function renderWorkout(){
+  const key=data.activeDay||"monday", p=plan[key];
+  const dayLog=data.workoutLogs[today]?.[key]||{};
+  let html=`<div class="card"><div class="section-title"><div><h3>${p.name}</h3><span>${p.focus}</span></div><span class="chip accent">${p.exercises.length} exercises</span></div>`;
+  p.exercises.forEach((e,idx)=>{
+    const [name,sets,min,max,rir,rest]=e;
+    html+=`<div class="exercise">
+      <div class="exercise-head"><div><div class="exercise-name">${idx+1}. ${name}</div><div class="exercise-meta">${sets} sets · ${min}–${max} reps · ${rir} · rest ${rest}</div></div>
+      <span class="tag">${(dayLog[idx]?.completed||0)}/${sets} sets</span></div>
+      <div class="set-grid"><div>Set</div><div>Weight</div><div>Reps</div><div>RIR</div>`;
+    for(let s=0;s<sets;s++){
+      const saved=dayLog[idx]?.sets?.[s]||{};
+      html+=`<div class="setno">${s+1}</div>
+        <input type="number" step="0.5" placeholder="kg" value="${saved.weight??""}" onchange="saveSet('${key}',${idx},${s},'weight',this.value)">
+        <input type="number" placeholder="reps" value="${saved.reps??""}" onchange="saveSet('${key}',${idx},${s},'reps',this.value)">
+        <input type="number" step="1" placeholder="RIR" value="${saved.rir??""}" onchange="saveSet('${key}',${idx},${s},'rir',this.value)">`;
+    }
+    html+=`</div><div style="height:7px"></div><button class="btn secondary full" onclick="completeExercise('${key}',${idx})">Mark exercise complete</button></div>`;
+  });
+  html+=`<div class="info">Progression: stay inside the rep range. When you can reach the top of the range across your sets with good technique and the target RIR, increase the load slightly next time.</div></div>`;
+  document.getElementById("workoutContent").innerHTML=html;
+}
+function ensureWorkoutDay(key){
+  data.workoutLogs[today]=data.workoutLogs[today]||{};
+  data.workoutLogs[today][key]=data.workoutLogs[today][key]||{};
+  return data.workoutLogs[today][key];
+}
+function saveSet(key,ei,si,field,value){
+  const day=ensureWorkoutDay(key);
+  day[ei]=day[ei]||{sets:[],completed:0};
+  day[ei].sets=day[ei].sets||[];
+  day[ei].sets[si]=day[ei].sets[si]||{};
+  day[ei].sets[si][field]=value;
+  save(); renderWorkout();
+}
+function completeExercise(key,ei){
+  const day=ensureWorkoutDay(key);
+  const sets=plan[key].exercises[ei][1];
+  const filled=(day[ei]?.sets||[]).filter(s=>s&&s.reps).length;
+  day[ei]=day[ei]||{sets:[]};
+  day[ei].completed = Math.min(sets, Math.max(filled, sets));
+  save(); renderWorkout(); renderDashboard();
+}
+function resetWorkout(){
+  if(confirm("Clear today's workout log?")){ if(data.workoutLogs[today]) delete data.workoutLogs[today]; save(); renderWorkout(); renderDashboard(); }
+}
+
+function toggleChecklist(i,val){
+  data.checklist[today]=data.checklist[today]||{};
+  data.checklist[today][i]=val; save(); renderDashboard();
+}
+
+function saveDailyLog(){
+  const obj={
+    date:document.getElementById("logDate").value||today,
+    weight:val("logWeight"), calories:val("logCalories"), protein:val("logProtein"),
+    steps:val("logSteps"), sleep:val("logSleep"), notes:document.getElementById("logNotes").value
+  };
+  const idx=data.dailyLogs.findIndex(x=>x.date===obj.date);
+  if(idx>=0) data.dailyLogs[idx]=obj; else data.dailyLogs.push(obj);
+  data.dailyLogs.sort((a,b)=>a.date.localeCompare(b.date));
+  if(obj.weight) data.settings.weight=Number(obj.weight);
+  save(); clearLogFields(); 
+function restoreLocalBackup(){
+  const backup=localStorage.getItem(BACKUP_KEY);
+  if(!backup){ alert("No local backup snapshot is available yet."); return; }
+  if(confirm("Restore the last automatic local backup? This will replace the current local data.")){
+    try{ data=JSON.parse(backup); localStorage.setItem(KEY,JSON.stringify(data)); renderAll(); alert("Previous local snapshot restored."); }
+    catch(e){ alert("Backup snapshot is invalid."); }
+  }
+}
+async function registerPWA(){
+  const status=document.getElementById("storageStatus");
+  if(!("serviceWorker" in navigator)){
+    status.textContent="Browser storage is available; install mode depends on Safari.";
+    return;
+  }
+  try{
+    await navigator.serviceWorker.register("./sw.js");
+    status.textContent="✓ Data saves in this browser. PWA offline cache ready.";
+  }catch(e){
+    status.textContent="Data saves locally. For offline app mode, open this site from a hosted HTTPS address.";
+  }
+}
+
+renderAll(); alert("Daily log saved.");
+}
+function val(id){
+  const v=document.getElementById(id).value;
+  return v==="" ? "" : Number(v);
+}
+function clearLogFields(){
+  ["logWeight","logCalories","logProtein","logSteps","logSleep","logNotes"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("logDate").value=today;
+}
+function saveMeasurement(){
+  const obj={
+    date:document.getElementById("measureDate").value||today,
+    waist:val("measureWaist"), chest:val("measureChest"), arm:val("measureArm"), thigh:val("measureThigh"), bf:val("measureBf")
+  };
+  data.measurements.push(obj); data.measurements.sort((a,b)=>a.date.localeCompare(b.date)); save();
+  ["measureWaist","measureChest","measureArm","measureThigh","measureBf"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("measureDate").value=today; renderTracking(); alert("Measurements saved.");
+}
+function renderTracking(){
+  const rows=[...data.dailyLogs].slice(-14).reverse();
+  let html=`<thead><tr><th>Date</th><th>Weight</th><th>kcal</th><th>Protein</th><th>Steps</th><th>Sleep</th></tr></thead><tbody>`;
+  if(!rows.length) html+=`<tr><td colspan="6" class="empty">No daily logs yet.</td></tr>`;
+  else rows.forEach(r=>html+=`<tr><td>${r.date}</td><td>${r.weight||"—"}</td><td>${r.calories||"—"}</td><td>${r.protein||"—"}g</td><td>${r.steps||"—"}</td><td>${r.sleep||"—"}h</td></tr>`);
+  html+=`</tbody>`;
+  document.getElementById("trackingTable").innerHTML=html;
+}
+function clearTracking(){
+  if(confirm("Delete all daily logs and measurements?")){data.dailyLogs=[];data.measurements=[];save();renderTracking();renderDashboard();}
+}
+function getMonthNumber(){
+  if(!data.dailyLogs.length) return 1;
+  const first=new Date(data.dailyLogs[0].date);
+  const now=new Date(today);
+  const m=(now.getFullYear()-first.getFullYear())*12+(now.getMonth()-first.getMonth())+1;
+  return Math.min(12,Math.max(1,m));
+}
+function exportData(){
+  const payload={appVersion:APP_VERSION,exportedAt:new Date().toISOString(),data};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="fitness-dashboard-backup.json"; a.click(); URL.revokeObjectURL(a.href);
+}
+document.getElementById("importFile").addEventListener("change",e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{try{const imported=JSON.parse(reader.result); data={...structuredClone(defaultData),...imported};save();
+function restoreLocalBackup(){
+  const backup=localStorage.getItem(BACKUP_KEY);
+  if(!backup){ alert("No local backup snapshot is available yet."); return; }
+  if(confirm("Restore the last automatic local backup? This will replace the current local data.")){
+    try{ data=JSON.parse(backup); localStorage.setItem(KEY,JSON.stringify(data)); renderAll(); alert("Previous local snapshot restored."); }
+    catch(e){ alert("Backup snapshot is invalid."); }
+  }
+}
+async function registerPWA(){
+  const status=document.getElementById("storageStatus");
+  if(!("serviceWorker" in navigator)){
+    status.textContent="Browser storage is available; install mode depends on Safari.";
+    return;
+  }
+  try{
+    await navigator.serviceWorker.register("./sw.js");
+    status.textContent="✓ Data saves in this browser. PWA offline cache ready.";
+  }catch(e){
+    status.textContent="Data saves locally. For offline app mode, open this site from a hosted HTTPS address.";
+  }
+}
+
+renderAll();alert("Data imported.");}catch(err){alert("Invalid backup file.");}};
+  reader.readAsText(file);
+});
+function resetAll(){
+  if(confirm("Reset everything in this local fitness app? This cannot be undone.")){localStorage.removeItem(KEY);data=load();
+function restoreLocalBackup(){
+  const backup=localStorage.getItem(BACKUP_KEY);
+  if(!backup){ alert("No local backup snapshot is available yet."); return; }
+  if(confirm("Restore the last automatic local backup? This will replace the current local data.")){
+    try{ data=JSON.parse(backup); localStorage.setItem(KEY,JSON.stringify(data)); renderAll(); alert("Previous local snapshot restored."); }
+    catch(e){ alert("Backup snapshot is invalid."); }
+  }
+}
+async function registerPWA(){
+  const status=document.getElementById("storageStatus");
+  if(!("serviceWorker" in navigator)){
+    status.textContent="Browser storage is available; install mode depends on Safari.";
+    return;
+  }
+  try{
+    await navigator.serviceWorker.register("./sw.js");
+    status.textContent="✓ Data saves in this browser. PWA offline cache ready.";
+  }catch(e){
+    status.textContent="Data saves locally. For offline app mode, open this site from a hosted HTTPS address.";
+  }
+}
+
+renderAll();}
+}
+function renderAll(){
+  renderDashboard(); renderWorkoutNav(); renderWorkout(); renderTracking();
+  document.getElementById("logDate").value=today;
+  document.getElementById("measureDate").value=today;
+}
+
+function restoreLocalBackup(){
+  const backup=localStorage.getItem(BACKUP_KEY);
+  if(!backup){ alert("No local backup snapshot is available yet."); return; }
+  if(confirm("Restore the last automatic local backup? This will replace the current local data.")){
+    try{ data=JSON.parse(backup); localStorage.setItem(KEY,JSON.stringify(data)); renderAll(); alert("Previous local snapshot restored."); }
+    catch(e){ alert("Backup snapshot is invalid."); }
+  }
+}
+async function registerPWA(){
+  const status=document.getElementById("storageStatus");
+  if(!("serviceWorker" in navigator)){
+    status.textContent="Browser storage is available; install mode depends on Safari.";
+    return;
+  }
+  try{
+    await navigator.serviceWorker.register("./sw.js");
+    status.textContent="✓ Data saves in this browser. PWA offline cache ready.";
+  }catch(e){
+    status.textContent="Data saves locally. For offline app mode, open this site from a hosted HTTPS address.";
+  }
+}
+
+renderAll();
+</script>
+</body>
+</html>
